@@ -1,0 +1,5 @@
+name = Context Menu Depth
+description = Provides a context condition to react on the menu depth of the current node.
+core = 7.x
+package = Datacom
+dependencies[] = context

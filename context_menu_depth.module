@@ -1,0 +1,54 @@
+<?php
+/**
+ * @file
+ *  Defines a context condition to react on the menu depth.
+ */
+
+ /**
+ * Implements hook_context_plugins().
+ */
+function context_menu_depth_context_plugins() {
+  $plugins = array();
+  $plugins['context_menu_depth'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'context_menu_depth'),
+      'file' => 'context_menu_depth.inc',
+      'class' => 'context_menu_depth',
+      'parent' => 'context_condition',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implements hook_context_registry().
+ */
+function context_menu_depth_context_registry() {
+  return array(
+    'conditions' => array(
+      'menu_depth' => array(
+        'title' => t('Menu Depth'),
+        'description' => t('Set this context based on the nodes menu depth.'),
+        'plugin' => 'context_menu_depth',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_entity_view().
+ *
+ */
+function context_menu_depth_entity_view($entity, $type, $view_mode, $langcode) {
+  if ($view_mode !== 'submenu') {
+    $menu_depth = db_select('menu_links', 'm')
+      ->fields('m', array('depth'))
+      ->condition('link_path', $_GET['q'], '=')
+      ->execute()
+      ->fetchAssoc();
+
+    if (isset($menu_depth) && $plugin = context_get_plugin('condition', 'menu_depth')) {
+      $plugin->execute($menu_depth['depth']);
+    }
+  }
+}
