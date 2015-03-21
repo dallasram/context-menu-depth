@@ -40,6 +40,7 @@ function context_menu_depth_context_registry() {
  *
  */
 function context_menu_depth_entity_view($entity, $type, $view_mode, $langcode) {
+  // @TODO: ensure the safety of using $_GET['q'] such as it is.
   if ($view_mode !== 'submenu') {
     $menu_depth = db_select('menu_links', 'm')
       ->fields('m', array('depth'))
